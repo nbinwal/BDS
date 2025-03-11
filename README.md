@@ -1,5 +1,3 @@
-Below is the final deliverable document that aligns with all the requirements. You can compile this text into your final PDF submission (“Group-[number].pdf”).
-
 ---
 
 # Optimizing Ride‑Sharing Operations through Big Data Analysis using Hadoop Map‑Reduce
@@ -48,7 +46,7 @@ The ride‑sharing industry is highly competitive and dynamic. In this project, 
 
 **Dataset:** “Ride‑Sharing Platform Data”  
 **Source:** Available on Kaggle  
-**Link:** [https://www.kaggle.com/datasets/adnananam/ride-sharing-platform-data citeturn0search7]
+**Link:** [https://www.kaggle.com/datasets/adnananam/ride-sharing-platform-data]
 
 **Dataset Details:**  
 - **Size:** Contains over 10,000 records.
