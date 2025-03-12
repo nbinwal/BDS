@@ -1,66 +1,65 @@
----
-
 # Optimizing Ride‑Sharing Operations through Big Data Analysis using Hadoop Map‑Reduce
 
 ## 1. Detailed Problem Statement & Analysis Tasks
 
 ### Problem Statement
-The ride‑sharing industry is highly competitive and dynamic. In this project, you will analyze a large ride‑sharing dataset to uncover actionable insights that can help optimize operations and improve customer experience. Your goal is to apply Hadoop Map‑Reduce techniques to address several key operational challenges.
+The ride‑sharing industry is rapidly evolving and faces constant pressure to optimize operations and enhance customer satisfaction. In this project, you will analyze a large ride‑sharing dataset to extract actionable insights that can support operational improvements, strategic decision‑making, and targeted marketing initiatives.
 
 **Objective:**  
+Using the “Ride‑Sharing Platform Data” dataset, your Map‑Reduce solution will:
 - Forecast temporal demand patterns.
-- Identify spatial hotspots for pickups.
+- Identify spatial hotspots for ride pickups.
 - Analyze fare trends and revenue.
 - Evaluate driver performance.
-- Segment customers based on ride metrics.
+- Segment customers based on ride frequency and fare metrics.
 
 ### Analysis Tasks
 1. **Temporal Demand Analysis:**  
-   - **Input:** Timestamps of ride records.  
-   - **Task:** Count the number of rides per hour.  
+   - **Input:** Ride records with timestamps.  
+   - **Task:** Extract the hour from each timestamp and count the number of rides per hour.  
    - **Expected Output:** A time series (hour vs. ride count) to identify peak demand periods.
 
 2. **Spatial Hotspot Analysis:**  
    - **Input:** Pickup latitude and longitude.  
-   - **Task:** Group rides by a grid cell (obtained by rounding coordinates) and count rides per cell.  
-   - **Expected Output:** A list (or heatmap) of grid cells with ride counts to reveal high‑demand geographic areas.
+   - **Task:** Round the coordinates to two decimal places (forming grid cells) and count rides per grid cell.  
+   - **Expected Output:** A table (or heatmap) listing grid cells with the corresponding ride counts, highlighting high‑demand areas.
 
 3. **Fare and Revenue Analysis:**  
-   - **Input:** Ride timestamp and fare value.  
-   - **Task:** Aggregate total fare and count rides per day, then calculate average fare.  
-   - **Expected Output:** For each day, total fare, ride count, and average fare.
+   - **Input:** Timestamps and fare values.  
+   - **Task:** Group rides by date, sum the fare amounts, count rides per day, and compute the average fare.  
+   - **Expected Output:** For each day, report total fare, ride count, and average fare.
 
 4. **Driver Performance Evaluation:**  
-   - **Input:** Driver ID and driver rating.  
-   - **Task:** Calculate the average rating per driver.  
-   - **Expected Output:** A list of drivers with their average ratings.
+   - **Input:** Driver IDs and driver ratings.  
+   - **Task:** Aggregate ratings by driver to compute each driver’s average rating.  
+   - **Expected Output:** A list of drivers with their average ratings for performance evaluation.
 
 5. **Customer Segmentation Analysis:**  
-   - **Input:** Customer ID and fare per ride.  
-   - **Task:** Aggregate total rides and total fare per customer, then compute the average fare per ride.  
-   - **Expected Output:** Segmented customer profiles (total rides, total fare, average fare) for targeted marketing strategies.
+   - **Input:** Customer IDs and fare per ride.  
+   - **Task:** Aggregate total rides and total fare per customer; then compute the average fare per ride.  
+   - **Expected Output:** Segmented customer profiles detailing total rides, total fare, and average fare to support targeted marketing.
 
 ---
 
 ## 2. Dataset & Source Information
 
-**Dataset:** “Ride‑Sharing Platform Data”  
-**Source:** Available on Kaggle  
+**Dataset:** Ride‑Sharing Platform Data  
+**Source:** Kaggle  
 **Link:** [https://www.kaggle.com/datasets/adnananam/ride-sharing-platform-data]
 
 **Dataset Details:**  
 - **Size:** Contains over 10,000 records.
-- **Fields:**  
-  1. `ride_id`  
-  2. `timestamp` (format: YYYY-MM-DD HH:MM:SS)  
-  3. `pickup_lat`  
-  4. `pickup_lon`  
-  5. `dropoff_lat`  
-  6. `dropoff_lon`  
-  7. `fare`  
-  8. `driver_id`  
-  9. `driver_rating`  
-  10. `customer_id`
+- **Fields/Attributes:**  
+  1. **ride_id**  
+  2. **timestamp** (format: YYYY‑MM‑DD HH:MM:SS)  
+  3. **pickup_lat**  
+  4. **pickup_lon**  
+  5. **dropoff_lat**  
+  6. **dropoff_lon**  
+  7. **fare**  
+  8. **driver_id**  
+  9. **driver_rating**  
+  10. **customer_id**
 
 *Note:* Adjust field indices if your CSV structure differs.
 
@@ -72,10 +71,10 @@ The ride‑sharing industry is highly competitive and dynamic. In this project, 
 ```
 [Input CSV]
       │
-      ▼  (Mapper: Extract hour from timestamp, emit (hour, 1))
-[Shuffle/Sort: Group by hour]
+      ▼   (Mapper: Extract hour from timestamp → emit (hour, 1))
+[Shuffle/Sort: Group records by hour]
       │
-      ▼  (Reducer: Sum counts per hour)
+      ▼   (Reducer: Sum counts per hour)
 [Output] → (hour, total_rides)
 ```
 
@@ -83,10 +82,10 @@ The ride‑sharing industry is highly competitive and dynamic. In this project, 
 ```
 [Input CSV]
       │
-      ▼  (Mapper: Round pickup_lat & pickup_lon, emit (grid_cell, 1))
-[Shuffle/Sort: Group by grid_cell]
+      ▼   (Mapper: Round pickup_lat & pickup_lon to 2 decimals → emit (grid_cell, 1))
+[Shuffle/Sort: Group records by grid_cell]
       │
-      ▼  (Reducer: Sum counts per grid cell)
+      ▼   (Reducer: Sum counts per grid cell)
 [Output] → (grid_cell, ride_count)
 ```
 
@@ -94,10 +93,10 @@ The ride‑sharing industry is highly competitive and dynamic. In this project, 
 ```
 [Input CSV]
       │
-      ▼  (Mapper: Extract date and fare, emit (date, "fare,1"))
-[Shuffle/Sort: Group by date]
+      ▼   (Mapper: Extract date and fare → emit (date, "fare,1"))
+[Shuffle/Sort: Group records by date]
       │
-      ▼  (Reducer: Aggregate fare & count, compute average fare)
+      ▼   (Reducer: Sum fares and counts; compute average fare)
 [Output] → (date, total_fare, ride_count, avg_fare)
 ```
 
@@ -105,10 +104,10 @@ The ride‑sharing industry is highly competitive and dynamic. In this project, 
 ```
 [Input CSV]
       │
-      ▼  (Mapper: Extract driver_id & rating, emit (driver_id, "rating,1"))
-[Shuffle/Sort: Group by driver_id]
+      ▼   (Mapper: Extract driver_id & rating → emit (driver_id, "rating,1"))
+[Shuffle/Sort: Group records by driver_id]
       │
-      ▼  (Reducer: Sum ratings & counts, compute average rating)
+      ▼   (Reducer: Sum ratings and counts; compute average rating)
 [Output] → (driver_id, avg_rating)
 ```
 
@@ -116,10 +115,10 @@ The ride‑sharing industry is highly competitive and dynamic. In this project, 
 ```
 [Input CSV]
       │
-      ▼  (Mapper: Extract customer_id & fare, emit (customer_id, "fare,1"))
-[Shuffle/Sort: Group by customer_id]
+      ▼   (Mapper: Extract customer_id & fare → emit (customer_id, "fare,1"))
+[Shuffle/Sort: Group records by customer_id]
       │
-      ▼  (Reducer: Sum fares & counts, compute average fare)
+      ▼   (Reducer: Aggregate total fare and count rides; compute average fare)
 [Output] → (customer_id, total_rides, total_fare, avg_fare)
 ```
 
@@ -131,12 +130,12 @@ The ride‑sharing industry is highly competitive and dynamic. In this project, 
 
 **Pseudo Code:**
 ```
-For each record in input:
+For each record:
     Parse timestamp to extract hour.
     Emit (hour, 1)
 
-For each group of records with the same hour:
-    Sum the counts.
+For each hour group:
+    Sum all counts.
     Emit (hour, total_rides)
 ```
 
@@ -190,11 +189,11 @@ if current_hour is not None:
 ```
 For each record:
     Parse pickup_lat and pickup_lon.
-    Round each to two decimal places to form grid_cell.
+    Round both values to 2 decimals to form grid_cell.
     Emit (grid_cell, 1)
 
-For each grid_cell:
-    Sum the counts.
+For each grid_cell group:
+    Sum all counts.
     Emit (grid_cell, ride_count)
 ```
 
@@ -251,8 +250,8 @@ For each record:
     Extract date from timestamp.
     Emit (date, "fare,1")
 
-For each date:
-    Sum fares and counts.
+For each date group:
+    Sum all fares and counts.
     Compute average fare.
     Emit (date, total_fare, ride_count, avg_fare)
 ```
@@ -318,7 +317,7 @@ For each record:
     Parse driver_id and driver_rating.
     Emit (driver_id, "rating,1")
 
-For each driver_id:
+For each driver_id group:
     Sum ratings and counts.
     Compute average rating.
     Emit (driver_id, avg_rating)
@@ -382,8 +381,8 @@ For each record:
     Parse customer_id and fare.
     Emit (customer_id, "fare,1")
 
-For each customer_id:
-    Sum fares and count rides.
+For each customer_id group:
+    Sum fares and ride counts.
     Compute average fare.
     Emit (customer_id, total_rides, total_fare, avg_fare)
 ```
@@ -436,27 +435,16 @@ if current_customer is not None and ride_count > 0:
     print(f"{current_customer}\tRides: {ride_count}\tTotal_Fare: {total_fare:.2f}\tAvg_Fare: {avg_fare:.2f}")
 ```
 
-**Diagram Overview (for Task 5):**
-```
-[Input CSV]
-      │
-      ▼  (Mapper: Emit (customer_id, "fare,1"))
-[Shuffle/Sort: Group by customer_id]
-      │
-      ▼  (Reducer: Aggregate fares and counts, compute average)
-[Output] → (customer_id, total_rides, total_fare, avg_fare)
-```
-
 ---
 
 ## 5. Execution Statistics
 
-For each Map‑Reduce job, capture and record the following metrics (available from your Hadoop job tracker or logs):
+For each Map‑Reduce job, record the following metrics (to be obtained from your Hadoop job tracker or logs):
 
 - **Number of Map Tasks:** e.g., 50 mappers  
 - **Number of Reduce Tasks:** e.g., 10 reducers  
-- **Memory Consumption per Task:** e.g., 1GB per mapper/reducer (or as observed)  
-- **Bytes Transferred:** Total data shuffled between mappers and reducers
+- **Memory Consumption per Task:** e.g., 1GB per mapper/reducer (as observed)  
+- **Bytes Transferred:** Total amount of data shuffled between mappers and reducers
 
 Summarize these details in a table in your final documentation.
 
@@ -464,25 +452,24 @@ Summarize these details in a table in your final documentation.
 
 ## Final Submission Deliverables
 
-Your final PDF document (“Group-[number].pdf”) should include:
+Your final PDF (“Group‑[number].pdf”) must include:
 
 1. **Detailed Problem Statement & Analysis Tasks:**  
-   - Explanation of the problem and objectives.
-   - Description of each analysis task (temporal, spatial, fare, driver, customer segmentation) with input/output details.
+   - A clear explanation of the problem and objectives.
+   - Descriptions of each of the five analysis tasks, including input and expected output.
 
 2. **Dataset & Source Information:**  
-   - Detailed description of the “Ride‑Sharing Platform Data” dataset from Kaggle, including the link and key attributes.
+   - A detailed description of the “Ride‑Sharing Platform Data” dataset (including the Kaggle link provided above) and any preprocessing performed.
 
-3. **Map‑Reduce Diagrams for Each Analysis Task:**  
-   - Diagrams (as shown above) illustrating the flow: Input → Mapper → Shuffle/Sort → Reducer → Output.
+3. **Map‑Reduce Diagrams:**  
+   - Diagrams for each analysis task showing the data flow from input → mapper → shuffle/sort → reducer → output.
 
 4. **Pseudo Code & Functional Code:**  
-   - Complete pseudo code for each task.
-   - Full Python mapper and reducer scripts for all five tasks.
+   - Full pseudo code and complete Python scripts (mapper and reducer) for all five Map‑Reduce tasks.
 
 5. **Execution Statistics:**  
-   - A summary table of Hadoop job metrics for each Map‑Reduce job (number of tasks, memory usage, bytes transferred).
+   - A summary table detailing Hadoop job metrics for each task (number of tasks, memory usage, bytes transferred).
 
 ---
 
-This final deliverable provides a comprehensive solution covering the problem statement, dataset description, complete Map‑Reduce code implementations, diagrams, and execution metrics. Adjust file paths, field indices, and configuration parameters as needed for your specific environment and dataset.
+This document provides a comprehensive, end‑to‑end solution for the assignment using a dataset with over 10,000 records. Adjust file paths, field indices, and configuration parameters as necessary for your Hadoop environment and dataset specifics before submission.
